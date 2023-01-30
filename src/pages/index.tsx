@@ -2,6 +2,7 @@ import Head from "next/head";
 
 import Header from "../components/Header";
 import Banner from "../components/Banner";
+import SmallCard from "@/components/SmallCard";
 
 interface ExploreData {
   img: string;
@@ -9,11 +10,17 @@ interface ExploreData {
   distance: string;
 }
 
-interface HomeProps {
-  exploreData: ExploreData[];
+interface CardsData {
+  img: string;
+  title: string;
 }
 
-const Home: React.FC<HomeProps> = ({ exploreData }) => {
+interface HomeProps {
+  exploreData: ExploreData[];
+  cardsData: CardsData[];
+}
+
+const Home: React.FC<HomeProps> = ({ exploreData, cardsData }) => {
   return (
     <div>
       <Head>
@@ -30,9 +37,20 @@ const Home: React.FC<HomeProps> = ({ exploreData }) => {
         <section className="pt-6">
           <h2 className="text-4xl font-semibold pb-5">Explore Nearby</h2>
 
-          {exploreData.map((item) => (
-            <h1>{item.location}</h1>
-          ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {exploreData.map(({ img, distance, location }) => (
+              <SmallCard
+                key={img}
+                img={img}
+                distance={distance}
+                location={location}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-4xl font-semibold py-8">Live Anywhere</h2>
         </section>
       </main>
     </div>
@@ -46,9 +64,14 @@ export async function getStaticProps(): Promise<{ props: HomeProps }> {
     "https://links.papareact.com/pyp"
   ).then((res) => res.json());
 
+  const cardsData: CardsData[] = await fetch(
+    "https://links.papareact.com/pyp"
+  ).then((res) => res.json());
+
   return {
     props: {
       exploreData,
+      cardsData,
     },
   };
 }
